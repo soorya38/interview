@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- Insert default roles
 INSERT INTO roles (name) 
-VALUES ('admin'), ('user'), ('guest')
+VALUES ('admin'), ('user'), ('instructor')
 ON CONFLICT (name) DO NOTHING;
 
 -- Create index for faster lookups
