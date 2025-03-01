@@ -69,3 +69,33 @@ func (r *Repository) GetUser(userID int) (*entity.User, error) {
 
 	return user, nil
 }
+
+func (r *Repository) UpdateUser(user *entity.User) error {
+	query := `
+		UPDATE users
+		SET username = $1, pass = $2, email = $3, role_id = $4, updated_at = $5, last_login = $6
+		WHERE user_id = $7
+	`
+	stmt, err := r.db.Prepare(query)
+	if err != nil {
+		log.Printf("err=%v", err)
+		return err
+	}
+
+	defer stmt.Close()
+	_, err = stmt.Exec(
+		user.Username,
+		user.Password,
+		user.Email,
+		user.RoleID,
+		user.UpdatedAt,
+		user.LastLogin,
+		user.UserID,
+	)
+	if err != nil {
+		log.Printf("err=%v", err)
+		return err
+	}
+
+	return nil
+}
