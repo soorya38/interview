@@ -32,9 +32,6 @@ func (s *Service) CreateUser(user *entity.User) error {
 	user.UpdatedAt = time.Now()
 	user.LastLogin = time.Now()
 
-	// Hash password in a real application
-	// user.Password = hashPassword(user.Password)
-
 	// The repository will set the ID in the user object if successful
 	err := s.repo.CreateUser(user)
 	if err != nil {
