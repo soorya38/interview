@@ -80,3 +80,10 @@ func (s *Service) UpdateUser(user *entity.User) error {
 
 	return s.repo.UpdateUser(user)
 }
+
+func (s *Service) DeleteUser(userID int) error {
+	if err := s.repo.DeleteUser(userID); err != nil {
+		return err
+	}
+	return nil
+}

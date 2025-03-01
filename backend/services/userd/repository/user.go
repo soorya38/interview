@@ -172,3 +172,32 @@ func (r *Repository) UpdateUser(user *entity.User) error {
 
 	return nil
 }
+
+func (r *Repository) DeleteUser(userID int) error {
+	if userID <= 0 {
+		return ErrInvalidInput
+	}
+
+	query := `
+		DELETE FROM users
+		WHERE user_id = $1
+	`
+
+	result, err := r.db.Exec(query, userID)
+	if err != nil {
+		log.Printf("DeleteUser error: %v", err)
+		return fmt.Errorf("failed to delete user: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		log.Printf("DeleteUser error: %v", err)
+		return fmt.Errorf("failed to get rows affected: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return ErrUserNotFound
+	}
+
+	return nil
+}

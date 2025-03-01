@@ -10,6 +10,7 @@ type Repository interface {
 type Writer interface {
 	CreateUser(user *entity.User) error
 	UpdateUser(user *entity.User) error
+	DeleteUser(userID int) error
 }
 
 type Reader interface {
@@ -19,4 +20,5 @@ type Reader interface {
 type Usecase interface {
 	CreateUser(user *entity.User) error
 	GetUser(userID int) (*entity.User, error)
+	DeleteUser(userID int) error
 }

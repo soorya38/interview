@@ -106,6 +106,20 @@ func updateUser(c *fiber.Ctx, service *usecase.Service) error {
 	return c.JSON(fiber.Map{"message": "User updated successfully"})
 }
 
+func deleteUser(c *fiber.Ctx, service *usecase.Service) error {	
+	userID := c.Params("id")
+	userId, err := strconv.Atoi(userID)
+	if err != nil || userId <= 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": e.ErrInvalidUserID.Error()})
+	}
+
+	if err = service.DeleteUser(userId); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON(fiber.Map{"message": "User deleted successfully"})
+}
+
+
 func RegisterHandlers(app *fiber.App, service *usecase.Service) {
 	app.Post("/user", func(c *fiber.Ctx) error {
 		return createUser(c, service)
@@ -117,5 +131,9 @@ func RegisterHandlers(app *fiber.App, service *usecase.Service) {
 
 	app.Put("/user/:id", func(c *fiber.Ctx) error {
 		return updateUser(c, service)
+	})
+
+	app.Delete("/user/:id", func(c *fiber.Ctx) error {
+		return deleteUser(c, service)
 	})
 }
