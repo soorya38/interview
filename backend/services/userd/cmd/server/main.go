@@ -4,7 +4,10 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"user-service/utils"
+	"userd/handler"
+	"userd/repository"
+	"userd/usecase"
+	"userd/utils"
 
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/lib/pq" // PostgreSQL driver
@@ -39,17 +42,12 @@ func main() {
 
 	log.Println("Connected to PostgreSQL database!")
 
+	repo := repository.NewRepository(db)
+	service := usecase.NewService(repo)
+
 	// Initialize Fiber app
 	app := fiber.New()
-
-	// Routes
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("User Service is running!")
-	})
-
-	app.Get("/health", func(c *fiber.Ctx) error {
-		return c.SendString("OK")
-	})
+	handler.RegisterHandlers(app, service)
 
 	// Start server
 	port := utils.GetEnv("PORT", "8080")

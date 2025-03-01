@@ -1,4 +1,4 @@
-module user-service
+module userd
 
 go 1.19
 
