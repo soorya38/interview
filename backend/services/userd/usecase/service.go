@@ -18,3 +18,11 @@ func (s *Service) CreateUser(user *entity.User) error {
 	}
 	return nil
 }
+
+func (s *Service) GetUser(userID int) (*entity.User, error) {
+	user, err := s.repo.GetUser(userID)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
