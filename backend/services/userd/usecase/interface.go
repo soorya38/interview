@@ -9,6 +9,7 @@ type Repository interface {
 
 type Writer interface {
 	CreateUser(user *entity.User) error
+	UpdateUser(user *entity.User) error
 }
 
 type Reader interface {

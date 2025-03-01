@@ -10,20 +10,21 @@ type Role struct {
 	Name   string
 }
 
+// User represents a user in the system
 type User struct {
-	UserID    int
-	Username  string
-	Password  string
-	Email     string
-	RoleID    int
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	LastLogin time.Time
+	ID        int       `json:"id" db:"user_id"`
+	Username  string    `json:"username" db:"username"`
+	Email     string    `json:"email" db:"email"`
+	Password  string    `json:"password,omitempty" db:"pass"`
+	RoleID    int       `json:"role_id" db:"role_id"`
+	CreatedAt time.Time `json:"created_at" db:"created_at"`
+	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
+	LastLogin time.Time `json:"last_login" db:"last_login"`
 }
 
 func NewUser(userID int, username string, password string, email string, roleID int) (*User, error) {
 	u := &User{
-		UserID:    userID,
+		ID:        userID,
 		Username:  username,
 		Password:  password,
 		Email:     email,
