@@ -5,15 +5,11 @@ import (
 	"strconv"
 	"strings"
 	"userd/entity"
+	e "userd/pkg/errors"
 	"userd/repository"
 	"userd/usecase"
 
 	"github.com/gofiber/fiber/v2"
-)
-
-var (
-	ErrInvalidUserData = errors.New("invalid user data")
-	ErrInvalidUserID   = errors.New("invalid user ID")
 )
 
 func validateEmail(email string) bool {
@@ -57,7 +53,7 @@ func getUser(c *fiber.Ctx, service *usecase.Service) error {
 	userID := c.Params("id")
 	userId, err := strconv.Atoi(userID)
 	if err != nil || userId <= 0 {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": ErrInvalidUserID.Error()})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": e.ErrInvalidUserID.Error()})
 	}
 
 	user, err := service.GetUser(userId)
@@ -80,7 +76,7 @@ func updateUser(c *fiber.Ctx, service *usecase.Service) error {
 	userID := c.Params("id")
 	userId, err := strconv.Atoi(userID)
 	if err != nil || userId <= 0 {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": ErrInvalidUserID.Error()})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": e.ErrInvalidUserID.Error()})
 	}
 
 	//read from request body
