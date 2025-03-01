@@ -3,7 +3,7 @@
 .PHONY: build run test lint clean setup-dev down help migrate
 
 # Service names
-SERVICES := user-service 
+SERVICES := userd
 
 # Docker compose commands
 DC := docker-compose
@@ -85,7 +85,7 @@ setup-dev:
 # Run database migrations for a specific service
 migrate:
 	@if [ -z "$(SERVICE)" ]; then \
-		echo "Please specify a service: make migrate SERVICE=user-service"; \
+		echo "Please specify a service: make migrate SERVICE=userd"; \
 	else \
 		echo "Running migrations for $(SERVICE)..."; \
 		cd services/$(SERVICE) && go run cmd/migrate/main.go; \

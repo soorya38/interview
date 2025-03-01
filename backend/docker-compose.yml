@@ -1,11 +1,11 @@
 services:
   # Service 1: User Service
-  user-service:
+  userd:
     build:
       context: .
       dockerfile: ./build/Dockerfile
       args:
-        SERVICE_NAME: user-service
+        SERVICE_NAME: userd
     ports:
       - "8081:8080"
     environment:
@@ -14,20 +14,28 @@ services:
       - DB_USER=postgres
       - DB_PASSWORD=password
       - DB_NAME=user_db
+      - DB_SSLMODE=disable
+    container_name: userd
     depends_on:
-      - user-db
+      - userd-db
+    restart: on-failure
 
-  user-db:
+  userd-db:
     image: postgres:14
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=user_db
+      - DB_SSLMODE=disable
     volumes:
-      - ./services/user-service/ops/db/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - user-db-data:/var/lib/postgresql/data
+      - ./services/userd/ops/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - userd-db-data:/var/lib/postgresql/data
+    container_name: user-db 
     ports:
       - "5433:5432"
 
 volumes:
-  user-db-data:
+  userd-db-data:
+
+networks:
+  default:
