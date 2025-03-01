@@ -33,7 +33,7 @@ func createUser(c *fiber.Ctx, service *usecase.Service) error {
 	}
 
 	if err := service.CreateUser(user); err != nil {
-		if errors.Is(err, usecase.ErrInvalidUser) {
+		if errors.Is(err, e.ErrInvalidUserData) {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 		}
 		if errors.Is(err, repository.ErrDuplicateKey) {
@@ -58,10 +58,10 @@ func getUser(c *fiber.Ctx, service *usecase.Service) error {
 
 	user, err := service.GetUser(userId)
 	if err != nil {
-		if errors.Is(err, usecase.ErrUserNotFound) {
+		if errors.Is(err, e.ErrUserNotFound) {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
 		}
-		if errors.Is(err, usecase.ErrInvalidUser) {
+		if errors.Is(err, e.ErrInvalidUserData) {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 		}
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
@@ -94,10 +94,10 @@ func updateUser(c *fiber.Ctx, service *usecase.Service) error {
 	user.ID = userId
 
 	if err = service.UpdateUser(user); err != nil {
-		if errors.Is(err, usecase.ErrUserNotFound) {
+		if errors.Is(err, e.ErrUserNotFound) {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
 		}
-		if errors.Is(err, usecase.ErrInvalidUser) {
+		if errors.Is(err, e.ErrInvalidUser) {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 		}
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})

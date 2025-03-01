@@ -4,12 +4,8 @@ import (
 	"errors"
 	"time"
 	"userd/entity"
+	e "userd/pkg/errors"
 	"userd/repository"
-)
-
-var (
-	ErrInvalidUser  = errors.New("invalid user data")
-	ErrUserNotFound = errors.New("user not found")
 )
 
 // Service handles business logic for users
@@ -28,7 +24,7 @@ func NewService(repo *repository.Repository) *Service {
 func (s *Service) CreateUser(user *entity.User) error {
 	// Validate user
 	if user.Username == "" || user.Email == "" || user.Password == "" {
-		return ErrInvalidUser
+		return e.ErrInvalidUserData
 	}
 
 	// Set timestamps
@@ -52,13 +48,13 @@ func (s *Service) CreateUser(user *entity.User) error {
 // GetUser retrieves a user by ID
 func (s *Service) GetUser(userID int) (*entity.User, error) {
 	if userID <= 0 {
-		return nil, ErrInvalidUser
+		return nil, e.ErrInvalidUserData
 	}
 
 	user, err := s.repo.GetUser(userID)
 	if err != nil {
 		if errors.Is(err, repository.ErrUserNotFound) {
-			return nil, ErrUserNotFound
+			return nil, e.ErrUserNotFound
 		}
 		return nil, err
 	}
@@ -70,25 +66,20 @@ func (s *Service) GetUser(userID int) (*entity.User, error) {
 func (s *Service) UpdateUser(user *entity.User) error {
 	// Validate user
 	if user.ID <= 0 || user.Username == "" || user.Email == "" {
-		return ErrInvalidUser
+		return e.ErrInvalidUserData
 	}
 
 	// Check if user exists
 	_, err := s.repo.GetUser(user.ID)
 	if err != nil {
 		if errors.Is(err, repository.ErrUserNotFound) {
-			return ErrUserNotFound
+			return e.ErrUserNotFound
 		}
 		return err
 	}
 
 	// Update timestamp
 	user.UpdatedAt = time.Now()
-
-	// If password is provided, hash it in a real application
-	// if user.Password != "" {
-	//     user.Password = hashPassword(user.Password)
-	// }
 
 	return s.repo.UpdateUser(user)
 }
