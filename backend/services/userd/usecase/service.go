@@ -27,6 +27,11 @@ func (s *Service) CreateUser(user *entity.User) error {
 		return e.ErrInvalidUserData
 	}
 
+	// Validate role_id
+	if user.RoleID <= 0 || user.RoleID > 3 {
+		return e.ErrInvalidUserData
+	}
+
 	// Set timestamps
 	user.CreatedAt = time.Now()
 	user.UpdatedAt = time.Now()

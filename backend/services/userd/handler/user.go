@@ -6,6 +6,7 @@ import (
 	"strings"
 	"userd/entity"
 	e "userd/pkg/errors"
+	"userd/presenter"
 	"userd/repository"
 	"userd/usecase"
 
@@ -22,14 +23,22 @@ func validateEmail(email string) bool {
 
 func createUser(c *fiber.Ctx, service *usecase.Service) error {
 	//read from request body
-	user := &entity.User{}
-	if err := c.BodyParser(user); err != nil {
+	reqUser := &presenter.User{}
+	if err := c.BodyParser(reqUser); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request format"})
 	}
 
 	// Basic validation
-	if user.Username == "" || user.Password == "" || !validateEmail(user.Email) {
+	if reqUser.Username == "" || reqUser.Password == "" || !validateEmail(reqUser.Email) {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Missing required fields or invalid email"})
+	}
+
+	// Convert presenter.User to entity.User
+	user := &entity.User{
+		Username: reqUser.Username,
+		Password: reqUser.Password,
+		Email:    reqUser.Email,
+		RoleID:   reqUser.RoleID,
 	}
 
 	if err := service.CreateUser(user); err != nil {
@@ -106,7 +115,7 @@ func updateUser(c *fiber.Ctx, service *usecase.Service) error {
 	return c.JSON(fiber.Map{"message": "User updated successfully"})
 }
 
-func deleteUser(c *fiber.Ctx, service *usecase.Service) error {	
+func deleteUser(c *fiber.Ctx, service *usecase.Service) error {
 	userID := c.Params("id")
 	userId, err := strconv.Atoi(userID)
 	if err != nil || userId <= 0 {
@@ -118,7 +127,6 @@ func deleteUser(c *fiber.Ctx, service *usecase.Service) error {
 	}
 	return c.JSON(fiber.Map{"message": "User deleted successfully"})
 }
-
 
 func RegisterHandlers(app *fiber.App, service *usecase.Service) {
 	app.Post("/user", func(c *fiber.Ctx) error {
